@@ -20,7 +20,7 @@
 </head>
 
 <body>
-  <div id="navbar"></div>
+
   <div class="container mb-3 text-center">
     <div class="container-fluid mb-3 text-center">
       <h1><a href="/media/imdb/" style="text-decoration: none; color: inherit;">🍿IMDB</a></h1>
@@ -83,28 +83,9 @@
   const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 </script>
 
-<script src='https://raw.githubusercontent.com/sky7t/sky7t.github.io/main/src/components/navspace.js'></script>
 
-<script>
-  fetch('https://raw.githubusercontent.com/sky7t/sky7t.github.io/main/src/components/nav.html')
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('File not found');
-      }
-      return response.text();
-    })
-    .then(data => {
-      document.getElementById('navbar').innerHTML = data;
-      displayRandomVariation();
-    })
-    .catch(error => {
-      if (error.message === 'File not found') {
-        console.warn('Navbar file not found. Skipping...');
-      } else {
-        console.error('Error fetching navbar:', error);
-      }
-    });
-</script>
+
+
 
 <script>
   fetch('https://raw.githubusercontent.com/sky7t/sky7t.github.io/main/src/components/footer.html')
