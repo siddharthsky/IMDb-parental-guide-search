@@ -35,6 +35,8 @@ The IMDb Parental Guide Search is designed to fetch detailed information about m
 
 ![Seasons and Episodes](screenshots/seasons-episodes.png)
 
+![Redirect](screenshots/redirect.png)
+
 
 ## Contributing 🤝
 
