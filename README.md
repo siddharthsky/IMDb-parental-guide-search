@@ -22,7 +22,7 @@ The IMDb Parental Guide Search is designed to fetch detailed information about m
 
 ## User Guide 📲
 
-1. Open the web app.
+1. Open the web app - https://bit.ly/IMDb-parental-guide-search
 2. Enter the movie or TV series name in the search bar.
 3. Click the "Search" button.
 4. Browse the displayed results and click on a title for more details.
