@@ -42,7 +42,7 @@ The IMDb Parental Guide Search is designed to fetch detailed information about m
 
 ## Contributing 🤝
 
-Contributions to the project are welcome! Feel free to submit pull requests or open issues to help us enhance the project.
+Contributions to the project are welcome! Feel free to submit pull requests or open issues to help enhance the project.
 
 
 ## License 📜
