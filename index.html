@@ -24,12 +24,24 @@
   <div id="navbar"></div>
   <div class="container mb-3 text-center">
     <div class="container-fluid mb-3 text-center">
-      <h1><a onclick="location.reload();" style="text-decoration: none; color: inherit;">🍿IMDb Parental Guide Search</a></h1>
-      <h5>Search movies and TV series</h5>
+      <div class="row">
+        <div class="col">
+          <h1 style="display: inline-block;"><a onclick="location.reload();" style="text-decoration: none; color: inherit;">🍿IMDb Parental Guide Search</a></h1>
+        </div>
+        <div class="col-auto">
+          <!-- Toggle Mode Button -->
+          <div class="position-relative" style="display: inline-block;">
+            <div class="position-absolute top-0 end-0 m-1">
+              <button class="btn btn-outline-secondary shadow" id="btnSwitch" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
+                <i class="fas fa-moon"></i> <!-- Dark Mode Icon -->
+                <i class="fas fa-sun" style="display: none;"></i> <!-- Light Mode Icon -->
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="dropdown-center mb-3">
-    </div>
-  
+    <h5>Search movies and TV series</h5>
     <div class="container mb-3 text-center">
       <form id="message-form" class="row g-3">
         <div class="input-group mb-3">
@@ -39,7 +51,14 @@
       </form>
     </div>
 
-  
+
+    <div class="container" id="apialerts" style="display: none;">
+      <div class="alert alert-warning" role="alert">
+        No movies found!
+      </div>
+    </div>
+
+
     <div class="container" id="apialerts" style="display: none;">
       <div class="alert alert-warning" role="alert">
         No movies found!
@@ -58,15 +77,6 @@
         <li class="page-item"><a class="page-link" href="#" id="nextBtn">Next</a></li>
       </ul>
     </nav>
-
-    
-    <!-- Toggle Mode Button -->
-    <div class="position-fixed top-0 end-0 m-1">
-      <button class="btn btn-outline-secondary shadow" id="btnSwitch"         style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
-        <i class="fas fa-moon"></i> <!-- Dark Mode Icon -->
-        <i class="fas fa-sun" style="display: none;"></i> <!-- Light Mode Icon -->
-      </button>
-    </div>
 
 
 
