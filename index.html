@@ -118,6 +118,16 @@
       }
     }
     return savedAPI = null;
+
+
+    function fetchWithTimeout(url, timeout = 5000) {
+      return Promise.race([
+        fetch(url) ,
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Request timed out')), timeout)
+        )
+      ]);
+    }
   }
 </script>
 
@@ -207,8 +217,8 @@
         const encodedSearchText = encodeURIComponent(searchText); // Encode the search text
         const apiUrl =  `https://www.omdbapi.com/?s=${searchText}&apikey=${apiKey}`;
 
-      fetch(apiUrl)
-        .then(response => response.json())
+      fetchWithTimeout(apiUrl)
+
         .then(data => {
           if (data.Response === "True") {
             displayMovies(data.Search);
@@ -226,6 +236,15 @@
     }
   });
 });
+
+function fetchWithTimeout(url, timeout = 5000) {
+      return Promise.race([
+        fetch(url).then(response => response.json()),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Request timed out')), timeout)
+        )
+      ]);
+    }
 
 // Function to display movies
 let apiKey;
@@ -272,8 +291,8 @@ function displayMovies(movies) {
 // Function to fetch and display seasons for a series
 function displaySeasons(imdbID) {
   alertZreset()
-  fetch(`https://www.omdbapi.com/?i=${imdbID}&apikey=${apiKey}`)
-    .then(response => response.json())
+  fetchWithTimeout(`https://www.omdbapi.com/?i=${imdbID}&apikey=${apiKey}`, 5000)
+     
     .then(data => {
       const seasons = data.totalSeasons;
       let seasonButtons = '';
@@ -301,15 +320,15 @@ function displaySeasons(imdbID) {
 // Function to fetch and display episodes for a specific season
 function displayEpisodes(imdbID, seasonNumber) {
   alertZreset()
-  fetch(`https://www.omdbapi.com/?i=${imdbID}&Season=${seasonNumber}&apikey=${apiKey}`)
-    .then(response => response.json())
+  fetchWithTimeout(`https://www.omdbapi.com/?i=${imdbID}&Season=${seasonNumber}&apikey=${apiKey}`)
+     
     .then(data => {
       const episodes = data.Episodes;
       let episodePromises = []; // Array to store episode fetch promises
 
       episodes.forEach(episode => {
-        const promise = fetch(`https://www.omdbapi.com/?i=${episode.imdbID}&apikey=${apiKey}`)
-          .then(response => response.json())
+        const promise = fetchWithTimeout(`https://www.omdbapi.com/?i=${episode.imdbID}&apikey=${apiKey}`)
+           
           .then(episodeData => episodeData);
         
         episodePromises.push(promise);
@@ -386,8 +405,8 @@ document.querySelector('.movie-container').addEventListener('click', function(ev
     const encodedSearchText = encodeURIComponent(searchText); // Encode the search text
     const apiUrl = `https://www.omdbapi.com/?s=${encodedSearchText}&apikey=${apiKey}`;
 
-    fetch(apiUrl)
-      .then(response => response.json())
+    fetchWithTimeout(apiUrl)
+       
       .then(data => {
         if (data.Response === "True") {
           displayMovies(data.Search);
@@ -414,8 +433,8 @@ document.getElementById("message-form").addEventListener("submit", function(even
     const encodedSearchText = encodeURIComponent(searchText); // Encode the search text
     const apiUrl = `https://www.omdbapi.com/?s=${encodedSearchText}&apikey=${apiKey}`;
 
-    fetch(apiUrl)
-      .then(response => response.json())
+    fetchWithTimeout(apiUrl)
+       
       .then(data => {
         if (data.Response === "True") {
           displayMovies(data.Search);
@@ -442,8 +461,8 @@ document.getElementById("message-form").addEventListener("submit", function(even
   
     // Function to fetch movie data based on page number
     function fetchMovies(apiUrl, page) {
-    fetch(apiUrl)
-        .then(response => response.json())
+    fetchWithTimeout(apiUrl)
+         
         .then(data => {
         if (data.Response === "True") {
             displayMovies(data.Search);
