@@ -120,14 +120,25 @@
     return savedAPI = null;
 
 
-    function fetchWithTimeout(url, timeout = 5000) {
-      return Promise.race([
-        fetch(url) ,
-        new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('Request timed out')), timeout)
-        )
-      ]);
-    }
+    function fetchWithTimeout(url, timeout = 8000) { // Increase to 8 seconds
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => {
+      reject(new Error("Request timed out"));
+    }, timeout);
+
+    fetch(url)
+      .then(response => {
+        clearTimeout(timer);
+        if (!response.ok) {
+          reject(new Error("Network response was not ok"));
+        }
+        return response.json();
+      })
+      .then(resolve)
+      .catch(reject);
+  });
+}
+
   }
 </script>
 
