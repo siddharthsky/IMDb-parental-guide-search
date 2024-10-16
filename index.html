@@ -137,7 +137,7 @@
       .then(resolve)
       .catch(error => {
         clearTimeout(timer);  // Clear timer in case of fetch failure
-        alert("API request failed: " + error.message); // Show alert with error message
+        alertZ("API request failed: " + error.message); // Show alert with error message
         reject(error);
       });
   });
