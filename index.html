@@ -135,9 +135,14 @@
         return response.json();
       })
       .then(resolve)
-      .catch(reject);
+      .catch(error => {
+        clearTimeout(timer);  // Clear timer in case of fetch failure
+        alert("API request failed: " + error.message); // Show alert with error message
+        reject(error);
+      });
   });
 }
+
 
   }
 </script>
