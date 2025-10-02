@@ -12,14 +12,20 @@
     }
   
     .movie-poster {
-      width: 175px;
-      height: 259px;
-      object-fit: cover;
-      margin: 0 auto 10px auto;
-      display: block;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-    }
+        width: 175px;
+        height: 259px;
+        object-fit: cover;
+        margin: 0 auto 10px auto;
+        display: block;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        background-image: url('https://placehold.co/175x259?text=preview+not+found');
+        background-size: cover;
+        background-position: center;
+        position: relative;
+        z-index: 0;
+        }
+
     .card-body {
       margin-top: 10px;
     }
@@ -83,6 +89,19 @@
         </div>
       </div>
     </form>
+
+<div id="latest-movies-main" class="container text-center mb-3">
+  <h3>Latest Movies (2025)</h3>
+  <div id="latest-movies" class="row justify-content-center mb-4"></div>
+</div>
+
+    <!-- <div id="latest-series-main" class="container text-center mb-3">
+    <h3>Latest Series</h3>
+    <div id="latest-series" class="row justify-content-center"></div>
+    </div> -->
+
+
+
     <div class="container" id="apialerts" style="display: none;"></div>
     <div class="movie-container text-center mb-3"></div>
     <div class="spinner-container" id="loadingSpinner" style="display: none;">
@@ -208,7 +227,7 @@
             <div class="card border-success h-100 shadow-sm">
               <div class="card-body text-success position-relative">
                 <a href="https://www.imdb.com/title/${movie.imdbID}/parentalguide" target="_blank">
-                  <img src="${movie.Poster !== "N/A" ? movie.Poster : 'https://placehold.co/175x259?text=No+Image'}" alt="${movie.Title}" class="movie-poster">
+                    <img src="${movie.Poster && movie.Poster !== 'N/A' ? movie.Poster : 'https://placehold.co/175x259?text=No+Image'}" alt="${movie.Title}" class="movie-poster">
                 </a>
                 <span class="badge bg-secondary position-absolute top-0 end-0 m-2">${movie.Year}</span>
               </div>
@@ -335,6 +354,7 @@
 
     document.getElementById("message-form").addEventListener("submit", function(event) {
       event.preventDefault();
+      hideLatestContent();
       page = 1;
       lastSearchText = document.getElementById("movie-input").value.trim();
       if (lastSearchText) {
@@ -380,6 +400,57 @@
 
     // Reset alerts on load
     alertZreset();
+
+
+    function fetchLatestContent() {
+    // Fetch latest movies
+    fetch(`https://www.omdbapi.com/?apikey=${apiKey}&s=movie&y=2025&page=1`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.Response === "True") displayLatestContent(data.Search, 'latest-movies');
+      });
+  
+  //   // Fetch latest series
+  //   fetch(`https://www.omdbapi.com/?apikey=${apiKey}&s=series&y=2025&page=1`)
+  //     .then(res => res.json())
+  //     .then(data => {
+  //       if (data.Response === "True") displayLatestContent(data.Search, 'latest-series');
+  //     });
+  }
+  
+  function displayLatestContent(items, containerId) {
+    // Limit to 6 items
+    const limitedItems = items.slice(0, 8);
+    let htmlContent = '';
+    limitedItems.forEach(item => {
+      htmlContent += `
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+          <div class="card border-success h-100 shadow-sm">
+            <div class="card-body text-success position-relative">
+              <a href="https://www.imdb.com/title/${item.imdbID}/parentalguide" target="_blank">
+                <img src="${item.Poster !== 'N/A' ? item.Poster : 'https://placehold.co/175x259?text=No+Image'}" alt="${item.Title}" class="movie-poster">
+              </a>
+              <span class="badge bg-secondary position-absolute top-0 end-0 m-2">${item.Year}</span>
+            </div>
+            <div class="card-footer border-success" style="font-size: 14px; font-weight: bold;">
+              ${item.Title} <span class="text-muted">(${item.Type})</span>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+    document.getElementById(containerId).innerHTML = htmlContent;
+  }
+  
+  fetchLatestContent();
+  
+  function hideLatestContent() {
+    document.getElementById('latest-movies').style.display = 'none';
+  //   document.getElementById('latest-series').style.display = 'none';
+    document.getElementById('latest-movies-main').style.display = 'none';
+  //   document.getElementById('latest-series-main').style.display = 'none';
+  }
+
   </script>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
