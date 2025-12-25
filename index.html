@@ -1,458 +1,272 @@
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>🍿 IMDb Parental Guide Search</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-  <style>
-    body {
-      padding-top: 0px;
-    }
-  
-    .movie-poster {
-        width: 175px;
-        height: 259px;
-        object-fit: cover;
-        margin: 0 auto 10px auto;
-        display: block;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-        background-image: url('https://placehold.co/175x259?text=preview+not+found');
-        background-size: cover;
-        background-position: center;
-        position: relative;
-        z-index: 0;
-        }
 
-    .card-body {
-      margin-top: 10px;
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+
+  <style>
+    body { padding-top: 65px; background: var(--bs-body-bg); }
+    .glass {
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(12px);
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 1.2rem;
     }
-    .spinner-container {
+    .movie-card img {
+      border-radius: 12px;
+      width: 100%;
+      aspect-ratio: 10/15;
+      object-fit: cover;
+    }
+    .fade-in { animation: fade .4s ease-in-out; }
+    @keyframes fade { from {opacity:0;} to {opacity:1;} }
+
+    /* ===== MOBILE IMPROVEMENTS ===== */
+    #searchForm {
       display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
       justify-content: center;
       align-items: center;
-      min-height: 100px;
     }
-    .pagination {
-      margin-bottom: 0;
+    #searchForm .form-control,
+    #searchForm .form-select,
+    #searchForm .btn {
+      min-width: 120px;
     }
-    .footer {
-      background: #222;
-      color: #ccc;
-      padding: 1rem 0;
-      margin-top: 2rem;
+    #searchForm .btn {
+      min-width: 100px;
     }
-    .search-bar {
-      max-width: 500px;
-      margin: 0 auto;
-    }
-    .season-btn, .back-btn {
-      margin: 0.2rem;
-    }
-    @media (max-width: 767px) {
-      .movie-poster {
-        width: 100px;
-        height: 148px;
+
+    @media (max-width: 576px) {
+      #searchForm {
+        flex-direction: column;
+        align-items: stretch;
       }
+      #searchForm .form-control,
+      #searchForm .form-select,
+      #searchForm .btn {
+        width: 100%;
+      }
+      .movie-card img { aspect-ratio: 2/3; }
+      .movie-card .btn { min-width: 100%; margin-top: 0.5rem; }
+      #latestMovies { display: flex; overflow-x: auto; gap: 0.5rem; padding-bottom: 0.5rem; }
+      #latestMovies .col-6 { flex: 0 0 auto; width: 140px; }
+      .pagination .page-link { padding: 0.5rem 1rem; font-size: 0.9rem; }
     }
   </style>
 </head>
+
 <body>
-  
 
- <div id="navbar"></div>
-  <main class="container mb-3">
-    <div class="text-center mt-4 mb-2">
-      <div class="row">
-        <div class="col">
-          <h1 style="display: inline-block;"><a onclick="location.reload();" style="text-decoration: none; color: inherit;">🍿IMDb Parental Guide Search</a></h1>
-        </div>
-        <div class="col-auto">
-          <div class="position-relative" style="display: inline-block;">
-            <div class="position-absolute top-0 end-0 m-1">
-              <button class="btn btn-outline-secondary shadow" id="btnSwitch" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
-                <i class="fas fa-moon"></i>
-                <i class="fas fa-sun" style="display: none;"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-      <p class="lead">Search movies and TV series</p>
-    </div>
-    <form id="message-form" class="row g-3 justify-content-center mb-3">
-      <div class="col-12 col-md-8">
-        <div class="input-group">
-          <input type="text" class="form-control" id="movie-input" placeholder="Search IMDb...">
-          <button class="btn btn-primary" type="submit" id="send-btn">Search</button>
-        </div>
+<!-- NAVBAR -->
+<nav class="navbar fixed-top navbar-dark bg-dark shadow-sm px-3">
+  <a class="navbar-brand fw-bold" id="homeTitle">🍿 IMDb Guide</a>
+  <button class="btn btn-sm btn-outline-light" id="btnSwitch">
+    <i class="fas fa-moon"></i>
+  </button>
+</nav>
+
+<!-- SEARCH -->
+<div class="container mt-4">
+  <div class="glass text-center mb-4">
+    <h2 class="fw-bold" id="pageTitle">Search Movies & TV Series Parental Guide</h2>
+
+    <!-- Mobile Advanced Toggle -->
+    <button class="btn btn-outline-secondary mb-2 d-sm-none" id="toggleAdvanced">Advanced ▼</button>
+
+    <form id="searchForm" class="gap-2">
+      <input id="movie-input" class="form-control" placeholder="Search IMDb...">
+
+      <div id="advancedFilters" class="d-none d-sm-flex gap-2">
+        <select id="year-input" class="form-select">
+          <option value="">Year</option>
+        </select>
+        <select id="type-input" class="form-select">
+          <option value="">All</option>
+          <option value="movie">Movie</option>
+          <option value="series">Series</option>
+        </select>
       </div>
-    </form>
 
-<div id="latest-movies-main" class="container text-center mb-3">
-  <h3>Latest Movies (2025)</h3>
-  <div id="latest-movies" class="row justify-content-center mb-4"></div>
+      <button class="btn btn-primary" type="submit">Search</button>
+    </form>
+  </div>
+
+  <!-- Latest Movies -->
+  <h4 id="latestTitle">🔥 Latest Movies (2025)</h4>
+  <div class="row g-3" id="latestMovies"></div>
+
+  <!-- Dynamic Results -->
+  <div class="mt-4" id="resultsArea"></div>
+
+  <!-- Pagination -->
+  <nav id="pagination" class="mt-3 d-none">
+    <ul class="pagination justify-content-center">
+      <li class="page-item"><a class="page-link" href="#" id="prevBtn">Previous</a></li>
+      <li class="page-item"><a class="page-link" href="#" id="nextBtn">Next</a></li>
+    </ul>
+  </nav>
+
+  <div class="text-center mt-4">
+    <small class="text-secondary">IMDb Data © via OMDb API</small>
+  </div>
 </div>
 
-    <!-- <div id="latest-series-main" class="container text-center mb-3">
-    <h3>Latest Series</h3>
-    <div id="latest-series" class="row justify-content-center"></div>
-    </div> -->
-
-
-
-    <div class="container" id="apialerts" style="display: none;"></div>
-    <div class="movie-container text-center mb-3"></div>
-    <div class="spinner-container" id="loadingSpinner" style="display: none;">
-      <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
-    </div>
-    <nav id="pagination" style="display: none;">
-      <ul class="pagination justify-content-center">
-        <li class="page-item"><a class="page-link" href="#" id="prevBtn">Previous</a></li>
-        <li class="page-item"><a class="page-link" href="#" id="nextBtn">Next</a></li>
-      </ul>
-    </nav>
-  </main>
-
-  <!-- Footer -->
- <div id="footer"></div>
-
- <script>
-  fetch('https://raw.githubusercontent.com/siddharthsky/sky7t.github.io/refs/heads/main/src/components/footer.html')
-    .then(response => response.text())
-    .then(data => {
-      document.getElementById('footer').innerHTML = data;
-    })
-    .catch(error => {
-      console.error('Error fetching footer:', error);
-    });
-</script>
-
 <script>
-  fetch('../../src/components/nav.html')
-    .then(response => {
-      if (response.status === 200) {
-        return response.text();
-      } else {
-        throw new Error('File not found');
-      }
-    })
-    .then(data => {
-      document.getElementById('navbar').innerHTML = data;
-      displayRandomVariation();
-    })
-    .catch(error => {
-      if (error.message !== 'File not found') {
-        console.error('Error fetching navbar:', error);
-      }
+/* ===== THEME TOGGLE ===== */
+const html = document.documentElement;
+document.getElementById("btnSwitch").onclick = () => {
+  const set = html.getAttribute("data-bs-theme") === "dark" ? "light" : "dark";
+  html.setAttribute("data-bs-theme", set);
+  localStorage.setItem("theme", set);
+};
+window.onload = () => html.setAttribute("data-bs-theme", localStorage.getItem("theme") || "dark");
+
+/* ===== API ===== */
+const api = () => document.cookie.split(";")
+  .find(x => x.trim().startsWith("savedAPIomdb="))?.split("=")[1] || "9004dd77";
+
+/* ===== Helpers ===== */
+async function apiCall(url) { return await (await fetch(url)).json(); }
+function showLoader(){ document.getElementById("resultsArea").innerHTML = `<div class="text-center p-5"><div class="spinner-border"></div></div>`; }
+function showMsg(text){ document.getElementById("resultsArea").innerHTML = `<div class="alert alert-warning">${text}</div>`; }
+
+let page = 1, lastQuery = "";
+let posterCache = {};  // store fetched posters
+
+async function getPoster(imdbID){
+  if(posterCache[imdbID]) return posterCache[imdbID];
+  const data = await apiCall(`https://www.omdbapi.com/?apikey=${api()}&i=${imdbID}`);
+  const poster = data.Poster && data.Poster !== "N/A"
+    ? data.Poster
+    : "https://placehold.co/175x259?text=No+Image";
+  posterCache[imdbID] = poster;
+  return poster;
+}
+
+/* ===== Render Movies ===== */
+function renderMovies(list, containerId) {
+  let html = `<div class="row g-3 fade-in">`;
+  list.forEach(m => html += `
+    <div class="col-6 col-md-3">
+      <div class="glass movie-card h-100">
+        <a href="https://www.imdb.com/title/${m.imdbID}/parentalguide" target="_blank">
+          <img src="${m.Poster !== "N/A" ? m.Poster : "https://placehold.co/200x300"}">
+        </a>
+        <div class="mt-2 fw-bold">${m.Title}</div>
+        <small class="text-secondary">${m.Year} — ${m.Type}</small>
+        ${m.Type === "series" ? `<button class="btn btn-sm btn-outline-primary mt-2 season-btn" data-id="${m.imdbID}">Seasons</button>` : ""}
+      </div>
+    </div>
+  `);
+  document.getElementById(containerId).innerHTML = html + "</div>";
+}
+
+/* ===== Latest Movies ===== */
+async function loadLatest() {
+  const data = await apiCall(`https://www.omdbapi.com/?apikey=${api()}&s=movie&y=2025`);
+  if (data.Response === "True") renderMovies(data.Search.slice(0,8), "latestMovies");
+}
+function hideLatest(){ document.getElementById("latestTitle").style.display = "none"; document.getElementById("latestMovies").style.display = "none"; }
+loadLatest();
+hideLatest();
+
+/* ===== Populate Year Selector ===== */
+const yearSelect = document.getElementById("year-input");
+for (let y = 2025; y >= 2000; y--) {
+  const opt = document.createElement("option"); opt.value = y; opt.textContent = y; yearSelect.appendChild(opt);
+}
+
+/* ===== Search Movies ===== */
+async function searchMovies(q, p = 1, y = "", type = "") {
+  showLoader();
+  let url = `https://www.omdbapi.com/?s=${encodeURIComponent(q)}&page=${p}&apikey=${api()}`;
+  if (y) url += `&y=${y}`;
+  if (type) url += `&type=${type}`;
+  const data = await apiCall(url);
+  if (data.Response === "False") return showMsg("⚠️ No results found.");
+  hideLatest();
+  renderMovies(data.Search, "resultsArea");
+  document.getElementById("pagination").classList.remove("d-none");
+}
+
+/* ===== Form Submit ===== */
+document.getElementById("searchForm").addEventListener("submit", e => {
+  e.preventDefault();
+  lastQuery = document.getElementById("movie-input").value.trim();
+  if (!lastQuery) return;
+  page = 1;
+  const year = document.getElementById("year-input").value;
+  const type = document.getElementById("type-input").value;
+  searchMovies(lastQuery, page, year, type);
+});
+
+/* ===== Pagination ===== */
+document.getElementById("nextBtn").onclick = e => { e.preventDefault(); searchMovies(lastQuery, ++page, document.getElementById("year-input").value, document.getElementById("type-input").value); }
+document.getElementById("prevBtn").onclick = e => { e.preventDefault(); if(page>1) searchMovies(lastQuery, --page, document.getElementById("year-input").value, document.getElementById("type-input").value); }
+
+/* ===== Seasons + Episodes ===== */
+document.addEventListener("click", async (e) => {
+  if (e.target.classList.contains("season-btn")) loadSeasons(e.target.dataset.id);
+  if (e.target.id === "btnBack") searchMovies(lastQuery, page, document.getElementById("year-input").value, document.getElementById("type-input").value);
+  if (e.target.id === "btnBackSeason") loadSeasons(e.target.dataset.id);
+  if (e.target.classList.contains("ep-btn")) {
+    const id = e.target.dataset.id; const season = e.target.dataset.season; showLoader();
+    const seasonData = await apiCall(`https://www.omdbapi.com/?apikey=${api()}&i=${id}&Season=${season}`);
+    if (!seasonData.Episodes) return showMsg("⚠️ No Episodes Found");
+
+    const episodes = await Promise.all(seasonData.Episodes.map(async ep => ({...ep, poster: await getPoster(ep.imdbID)})));
+
+    let html = `<button class="btn btn-outline-secondary mb-3" id="btnBackSeason" data-id="${id}">← Back to Seasons</button><div class="row g-3 fade-in">`;
+    episodes.forEach(ep => {
+      html += `<div class="col-6 col-md-3"><div class="glass movie-card h-100">
+        <a href="https://www.imdb.com/title/${ep.imdbID}/parentalguide" target="_blank">
+          <img src="${ep.poster}">
+        </a>
+        <div class="fw-bold mt-2">${ep.Title}</div>
+        <small class="text-secondary">Ep ${ep.Episode} — ${ep.Released}</small>
+      </div></div>`;
     });
+    html += "</div>";
+    document.getElementById("resultsArea").innerHTML = html;
+  }
+});
+
+/* ===== Load Seasons ===== */
+async function loadSeasons(id) {
+  showLoader();
+  const info = await apiCall(`https://www.omdbapi.com/?apikey=${api()}&i=${id}`);
+  const total = parseInt(info.totalSeasons) || 0;
+  let html = `<button class="btn btn-outline-secondary mb-3" id="btnBack">← Back</button>
+    <div class="glass text-center fade-in">
+      <img class="movie-card mb-2" style="aspect-ratio:10/15; width:180px; border-radius:14px;"
+        src="${info.Poster !== "N/A" ? info.Poster : "https://placehold.co/200x300"}">
+      <h4>${info.Title} (${info.Year})</h4>
+      <p class="text-secondary">Select a season</p>`;
+  for (let i = 1; i <= total; i++) html += `<button class="btn btn-primary m-1 ep-btn" data-id="${id}" data-season="${i}">Season ${i}</button>`;
+  html += "</div>";
+  hideLatest();
+  document.getElementById("pagination").classList.add("d-none");
+  document.getElementById("resultsArea").innerHTML = html;
+}
+
+/* ===== Reload / Reset on Title Click ===== */
+document.getElementById("homeTitle").onclick = () => location.reload();
+document.getElementById("pageTitle").onclick = () => location.reload();
+
+/* ===== Toggle Advanced Filters on Mobile ===== */
+document.getElementById("toggleAdvanced").onclick = () => {
+  const adv = document.getElementById("advancedFilters");
+  adv.classList.toggle("d-none");
+};
 </script>
 
-  <script>
-    const darkModeToggle = document.getElementById('btnSwitch');
-    const htmlTag = document.documentElement;
-    darkModeToggle.addEventListener('click', () => {
-      if (htmlTag.getAttribute('data-bs-theme') === 'light') {
-        htmlTag.setAttribute('data-bs-theme', 'dark');
-        darkModeToggle.querySelector('.fa-moon').style.display = 'none';
-        darkModeToggle.querySelector('.fa-sun').style.display = 'inline-block';
-      } else {
-        htmlTag.setAttribute('data-bs-theme', 'light');
-        darkModeToggle.querySelector('.fa-sun').style.display = 'none';
-        darkModeToggle.querySelector('.fa-moon').style.display = 'inline-block';
-      }
-    });
-
-    // Utility: API Key from Cookie (fallback to demo key)
-    function getSavedApiKeyFromCookies() {
-      const cookies = document.cookie.split(';');
-      for (const cookie of cookies) {
-        if (cookie.trim().startsWith("savedAPIomdb=")) {
-          return cookie.trim().substring("savedAPIomdb=".length);
-        }
-      }
-      return "9004dd77"; // fallback demo key
-    }
-
-    function fetchWithTimeout(url, timeout = 5000) {
-      return new Promise((resolve, reject) => {
-        const timer = setTimeout(() => reject(new Error("Request timed out")), timeout);
-        fetch(url)
-          .then(response => {
-            clearTimeout(timer);
-            if (!response.ok) reject(new Error("Network response was not ok"));
-            return response.json();
-          })
-          .then(resolve)
-          .catch(error => {
-            clearTimeout(timer);
-            reject(error);
-          });
-      });
-    }
-
-
-    function alertZ(text) {
-      const apialertsDiv = document.getElementById("apialerts");
-      apialertsDiv.innerHTML = `<div class="alert alert-warning" role="alert">${text}</div>`;
-      apialertsDiv.style.display = "block";
-    }
-    function alertZreset() {
-      const apialertsDiv = document.getElementById("apialerts");
-      apialertsDiv.style.display = "none";
-      apialertsDiv.innerHTML = '';
-    }
-
-    function showSpinner() {
-      document.getElementById('loadingSpinner').style.display = 'flex';
-    }
-    function hideSpinner() {
-      document.getElementById('loadingSpinner').style.display = 'none';
-    }
-
-    let page = 1;
-    let lastSearchText = '';
-    let apiKey = getSavedApiKeyFromCookies();
-
-    // Display Movies
-    function displayMovies(movies) {
-      alertZreset();
-      const chatContainer = document.querySelector(".movie-container");
-      chatContainer.innerHTML = "";
-      let row = '<div class="row justify-content-center">';
-      movies.forEach((movie, index) => {
-        row += `
-          <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-            <div class="card border-success h-100 shadow-sm">
-              <div class="card-body text-success position-relative">
-                <a href="https://www.imdb.com/title/${movie.imdbID}/parentalguide" target="_blank">
-                    <img src="${movie.Poster && movie.Poster !== 'N/A' ? movie.Poster : 'https://placehold.co/175x259?text=No+Image'}" alt="${movie.Title}" class="movie-poster">
-                </a>
-                <span class="badge bg-secondary position-absolute top-0 end-0 m-2">${movie.Year}</span>
-              </div>
-              <div class="card-footer border-success" style="font-size: 14px; font-weight: bold;">
-                ${movie.Title} <span class="text-muted">(${movie.Type})</span>
-                ${movie.Type === 'series' ? `<div class="d-grid gap-2 mt-2"><button class="btn btn-primary btn-sm season-btn" data-imdbid="${movie.imdbID}">Seasons</button></div>` : ''}
-              </div>
-            </div>
-          </div>
-        `;
-      });
-      row += '</div>';
-      chatContainer.innerHTML = row;
-    }
-
-    // Display Seasons
-    function displaySeasons(imdbID) {
-      alertZreset();
-      showSpinner();
-      fetchWithTimeout(`https://www.omdbapi.com/?i=${imdbID}&apikey=${apiKey}`, 5000)
-        .then(data => {
-          hideSpinner();
-          const seasons = data.totalSeasons;
-          let seasonButtons = `
-            <div class="mb-3">
-              <img src="${data.Poster && data.Poster !== "N/A" ? data.Poster : "https://placehold.co/175x259?text=No+Image"}" alt="${data.Title}" class="movie-poster" >
-              <h5 class="mt-2">${data.Title} (${data.Year})</h5>
-            </div>
-            <div class="mb-3">`;
-          for (let i = 1; i <= seasons; i++) {
-            seasonButtons += `
-              <button class="btn btn-primary season-btn m-1" data-imdbid="${imdbID}" data-season="${i}">Season ${i}</button>
-            `;
-          }
-          seasonButtons += `</div>
-            <button class="btn btn-secondary back-btn m-1">Back</button>
-          `;
-          document.querySelector('.movie-container').innerHTML = seasonButtons;
-        })
-        .catch(error => {
-          hideSpinner();
-          alertZ("Error fetching series data. Please try again.");
-        });
-    }
-
-    // Display Episodes
-    function displayEpisodes(imdbID, seasonNumber) {
-      alertZreset();
-      showSpinner();
-      fetchWithTimeout(`https://www.omdbapi.com/?i=${imdbID}&Season=${seasonNumber}&apikey=${apiKey}`)
-        .then(data => {
-          const episodes = data.Episodes;
-          let episodePromises = episodes.map(episode =>
-            fetchWithTimeout(`https://www.omdbapi.com/?i=${episode.imdbID}&apikey=${apiKey}`)
-          );
-          return Promise.all(episodePromises);
-        })
-        .then(episodesData => {
-          let episodeCards = `
-            <div class="text-center mb-3">
-              <button class="btn btn-primary" onclick="displaySeasons('${imdbID}')">Back to Seasons</button>
-            </div>
-            <div class="row justify-content-center">`;
-
-          episodesData.forEach((episodeData, idx) => {
-            const posterUrl = episodeData.Poster && episodeData.Poster !== "N/A"
-              ? episodeData.Poster
-              : "https://placehold.co/175x259?text=No+Image";
-            episodeCards += `
-              <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-                <div class="card border-success h-100 shadow-sm">
-                  <div class="card-body text-success position-relative">
-                    <a href="https://www.imdb.com/title/${episodeData.imdbID}/parentalguide" target="_blank">
-                      <img src="${posterUrl}" alt="${episodeData.Title}" class="movie-poster img-fluid">
-                    </a>
-                    <span class="badge bg-secondary position-absolute top-0 end-0 m-2">Ep ${episodeData.Episode}</span>
-                  </div>
-                  <div class="card-footer border-success" style="font-size: 14px; font-weight: bold;">
-                    ${episodeData.Title} <span class="text-muted">[${episodeData.Rated}]</span>
-                  </div>
-                </div>
-              </div>
-            `;
-          });
-
-          episodeCards += `
-            </div>
-            <div class="text-center mt-3">
-              <button class="btn btn-primary" onclick="displaySeasons('${imdbID}')">Back to Seasons</button>
-            </div>
-          `;
-          document.querySelector('.movie-container').innerHTML = episodeCards;
-          hideSpinner();
-        })
-        .catch(error => {
-          hideSpinner();
-          alertZ("Error fetching episodes. Please try again.");
-        });
-    }
-
-    // Pagination and Search
-    function fetchMovies(searchText, pageNum = 1) {
-      showSpinner();
-      alertZreset();
-      apiKey = getSavedApiKeyFromCookies();
-      const apiUrl = `https://www.omdbapi.com/?s=${encodeURIComponent(searchText)}&page=${pageNum}&apikey=${apiKey}`;
-      fetchWithTimeout(apiUrl)
-        .then(data => {
-          hideSpinner();
-          if (data.Response === "True") {
-            displayMovies(data.Search);
-            document.getElementById('pagination').style.display = 'block';
-          } else {
-            alertZ("No movies found!");
-            document.getElementById('pagination').style.display = 'none';
-          }
-        })
-        .catch(error => {
-          hideSpinner();
-          alertZ("Error fetching movie data. Please try again.");
-          document.getElementById('pagination').style.display = 'none';
-        });
-    }
-
-    document.getElementById("message-form").addEventListener("submit", function(event) {
-      event.preventDefault();
-      hideLatestContent();
-      page = 1;
-      lastSearchText = document.getElementById("movie-input").value.trim();
-      if (lastSearchText) {
-        fetchMovies(lastSearchText, page);
-      } else {
-        alertZ("Please enter the search text.");
-      }
-    });
-
-
-    document.getElementById("nextBtn").addEventListener("click", function(event) {
-      event.preventDefault();
-      if (lastSearchText) {
-        page++;
-        fetchMovies(lastSearchText, page);
-      }
-    });
-
-    document.getElementById("prevBtn").addEventListener("click", function(event) {
-      event.preventDefault();
-      if (lastSearchText && page > 1) {
-        page--;
-        fetchMovies(lastSearchText, page);
-      }
-    });
-
-    // Delegate clicks for dynamic content (Seasons/Episodes/Back)
-    document.querySelector('.movie-container').addEventListener('click', function(event) {
-      const target = event.target;
-      if (target.classList.contains('season-btn')) {
-        const imdbID = target.getAttribute('data-imdbid');
-        const seasonNumber = target.getAttribute('data-season');
-        if (seasonNumber) {
-          displayEpisodes(imdbID, seasonNumber);
-        } else {
-          displaySeasons(imdbID);
-        }
-      }
-      if (target.classList.contains('back-btn')) {
-        fetchMovies(lastSearchText, page);
-      }
-    });
-
-    // Reset alerts on load
-    alertZreset();
-
-
-    function fetchLatestContent() {
-    // Fetch latest movies
-    fetch(`https://www.omdbapi.com/?apikey=${apiKey}&s=movie&y=2025&page=1`)
-      .then(res => res.json())
-      .then(data => {
-        if (data.Response === "True") displayLatestContent(data.Search, 'latest-movies');
-      });
-  
-  //   // Fetch latest series
-  //   fetch(`https://www.omdbapi.com/?apikey=${apiKey}&s=series&y=2025&page=1`)
-  //     .then(res => res.json())
-  //     .then(data => {
-  //       if (data.Response === "True") displayLatestContent(data.Search, 'latest-series');
-  //     });
-  }
-  
-  function displayLatestContent(items, containerId) {
-    // Limit to 6 items
-    const limitedItems = items.slice(0, 8);
-    let htmlContent = '';
-    limitedItems.forEach(item => {
-      htmlContent += `
-        <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-          <div class="card border-success h-100 shadow-sm">
-            <div class="card-body text-success position-relative">
-              <a href="https://www.imdb.com/title/${item.imdbID}/parentalguide" target="_blank">
-                <img src="${item.Poster !== 'N/A' ? item.Poster : 'https://placehold.co/175x259?text=No+Image'}" alt="${item.Title}" class="movie-poster">
-              </a>
-              <span class="badge bg-secondary position-absolute top-0 end-0 m-2">${item.Year}</span>
-            </div>
-            <div class="card-footer border-success" style="font-size: 14px; font-weight: bold;">
-              ${item.Title} <span class="text-muted">(${item.Type})</span>
-            </div>
-          </div>
-        </div>
-      `;
-    });
-    document.getElementById(containerId).innerHTML = htmlContent;
-  }
-  
-  fetchLatestContent();
-  
-  function hideLatestContent() {
-    document.getElementById('latest-movies').style.display = 'none';
-  //   document.getElementById('latest-series').style.display = 'none';
-    document.getElementById('latest-movies-main').style.display = 'none';
-  //   document.getElementById('latest-series-main').style.display = 'none';
-  }
-
-  </script>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
