@@ -9,65 +9,324 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
 
   <style>
-    body { padding-top: 65px; background: var(--bs-body-bg); }
-    .glass {
-      background: rgba(255,255,255,0.04);
-      backdrop-filter: blur(12px);
-      border-radius: 16px;
-      border: 1px solid rgba(255,255,255,0.08);
-      padding: 1.2rem;
-    }
-    .movie-card img {
-      border-radius: 12px;
-      width: 100%;
-      aspect-ratio: 10/15;
-      object-fit: cover;
-    }
-    .fade-in { animation: fade .4s ease-in-out; }
-    @keyframes fade { from {opacity:0;} to {opacity:1;} }
+        body{
+        padding-top:70px;
+        font-family: system-ui,-apple-system,Segoe UI,Roboto;
+        background: var(--bs-body-bg);
+        transition: background .25s ease;
+        }
 
-    /* ===== MOBILE IMPROVEMENTS ===== */
-    #searchForm {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      justify-content: center;
-      align-items: center;
-    }
-    #searchForm .form-control,
-    #searchForm .form-select,
-    #searchForm .btn {
-      min-width: 120px;
-    }
-    #searchForm .btn {
-      min-width: 100px;
-    }
+        /* Dark mode */
+        [data-bs-theme="dark"] body{
+        background: linear-gradient(180deg,#0f1115,#14171d);
+        }
 
-    @media (max-width: 576px) {
-      #searchForm {
-        flex-direction: column;
-        align-items: stretch;
-      }
-      #searchForm .form-control,
-      #searchForm .form-select,
-      #searchForm .btn {
-        width: 100%;
-      }
-      .movie-card img { aspect-ratio: 2/3; }
-      .movie-card .btn { min-width: 100%; margin-top: 0.5rem; }
-      #latestMovies { display: flex; overflow-x: auto; gap: 0.5rem; padding-bottom: 0.5rem; }
-      #latestMovies .col-6 { flex: 0 0 auto; width: 140px; }
-      .pagination .page-link { padding: 0.5rem 1rem; font-size: 0.9rem; }
-    }
+        /* Light mode */
+        [data-bs-theme="light"] body{
+        background: linear-gradient(180deg,#f5f7fb,#e9eef6);
+        }
+
+        /* Navbar */
+        .navbar{
+        backdrop-filter: blur(12px);
+        /* background: rgba(15,15,18,0.8) !important;
+        border-bottom:1px solid rgba(255,255,255,0.05); */
+        }
+
+        /* Dark navbar */
+        [data-bs-theme="dark"] .navbar{
+        background: rgba(15,15,18,0.85) !important;
+        border-bottom:1px solid rgba(255,255,255,0.05);
+        }
+
+        /* Light navbar */
+        [data-bs-theme="light"] .navbar{
+        background: rgba(255,255,255,0.9) !important;
+        border-bottom:1px solid rgba(0,0,0,0.08);
+        }
+
+        .navbar-brand{
+        font-weight:700;
+        font-size:1.25rem;
+        }
+
+        /* Glass Container */
+        .glass{
+        backdrop-filter: blur(14px);
+        border-radius:16px;
+        padding:1.5rem;
+        transition: all .25s ease;
+        }
+
+        /* Dark glass */
+        [data-bs-theme="dark"] .glass{
+        background: rgba(255,255,255,0.04);
+        border:1px solid rgba(255,255,255,0.07);
+        }
+
+        /* Light glass */
+        [data-bs-theme="light"] .glass{
+        background: rgba(255,255,255,0.85);
+        border:1px solid rgba(0,0,0,0.08);
+        }
+
+        /* Search */
+        #searchForm{
+        display:flex;
+        flex-wrap:wrap;
+        gap:.6rem;
+        justify-content:center;
+        }
+
+        #searchForm input{
+        max-width:420px;
+        }
+
+        .form-control,
+        .form-select{
+        border-radius:12px;
+        }
+
+        /* Title animation */
+        .title-main{
+        animation:fadeDown .5s ease;
+        }
+
+        .title-sub{
+        animation:fadeUp .6s ease;
+        }
+
+        /* Hover effect */
+        .title-main:hover{
+        transform:scale(1.03);
+        transition:.2s ease;
+        }
+
+        /* Animations */
+        @keyframes fadeDown{
+        from{
+            opacity:0;
+            transform:translateY(-10px);
+        }
+        to{
+            opacity:1;
+            transform:translateY(0);
+        }
+        }
+
+        @keyframes fadeUp{
+        from{
+            opacity:0;
+            transform:translateY(10px);
+        }
+        to{
+            opacity:1;
+            transform:translateY(0);
+        }
+        }
+
+        /* Movie Cards */
+        .movie-card{
+        display:flex;
+        flex-direction:column;
+        transition:all .25s ease;
+        }
+
+        .movie-card .season-btn{
+        margin-top:auto;
+        }
+
+        .series-card{
+        border:2px solid #4c7dff !important;
+        }
+
+        .movie-card:hover{
+        transform:translateY(-6px) scale(1.02);
+        }
+
+        .movie-card img{
+        width:100%;
+        border-radius:12px;
+        aspect-ratio: 10/15;
+        object-fit:cover;
+        transition: transform .4s ease;
+        }
+
+        .movie-card:hover img{
+        transform: scale(1.05);
+        }
+
+        #year-input{
+        min-width:110px;
+        font-weight:500;
+        }
+
+        /* Movie Title */
+        .movie-card .fw-bold{
+        font-size:.95rem;
+        line-height:1.2;
+        }
+
+        /* Latest movies scroll */
+        #latestMovies{
+        display:flex;
+        overflow-x:auto;
+        gap:12px;
+        padding-bottom:10px;
+        }
+
+        #latestMovies::-webkit-scrollbar{
+        height:6px;
+        }
+
+        
+        [data-bs-theme="dark"] #latestMovies::-webkit-scrollbar-thumb{
+        background:#444;
+        }
+
+        [data-bs-theme="light"] #latestMovies::-webkit-scrollbar-thumb{
+        background:#bbb;
+        }
+
+        #latestMovies .col-6{
+        flex:0 0 auto;
+        width:170px;
+        }
+
+        /* Navbar text colors */
+        [data-bs-theme="dark"] .navbar-brand{
+        color:#fff;
+        }
+
+        [data-bs-theme="light"] .navbar-brand{
+        color:#111;
+        }
+
+        /* Movies Grid */
+        .results-grid{
+        display:grid;
+        gap:1rem;
+        grid-template-columns:repeat(2,1fr); /* mobile */
+        }
+
+        /* tablets */
+        @media (min-width:768px){
+        .results-grid{
+            grid-template-columns:repeat(4,1fr);
+        }
+        }
+
+        /* desktop / landscape */
+        @media (min-width:1200px){
+        .results-grid{
+            grid-template-columns:repeat(5,1fr);
+        }
+        }
+
+        .cursor-pointer{
+        cursor:pointer;
+        }
+
+        /* Better search button spacing */
+        #searchForm button{
+        padding:0.45rem 1.2rem;
+        font-weight:500;
+        }
+
+        /* Slight spacing for search controls */
+        #searchForm{
+        align-items:center;
+        }
+
+        .poster-wrap{
+        overflow:hidden;
+        border-radius:12px;
+        }
+
+        .poster-wrap img{
+        width:100%;
+        aspect-ratio:10/15;
+        object-fit:cover;
+        transition:transform .35s ease;
+        }
+
+        .movie-card:hover .poster-wrap img{
+        transform:scale(1.08);
+        }
+
+        .season-poster{
+        display:block;
+        margin:auto;
+        width:180px;
+        aspect-ratio:10/15;
+        object-fit:cover;
+        border-radius:14px;
+        }
+
+        .ep-btn{
+        min-width:110px;
+        }
+
+        /* Buttons */
+        .btn{
+        border-radius:10px;
+        }
+
+        .btn-primary{
+        background:#4c7dff;
+        border:none;
+        }
+
+        .btn-primary:hover{
+        background:#3b67e6;
+        }
+
+        /* Pagination */
+        .pagination .page-link{
+        border-radius:10px;
+        margin:0 3px;
+        }
+
+        /* Fade animation */
+        .fade-in{
+        animation:fade .35s ease;
+        }
+
+        @keyframes fade{
+        from{opacity:0; transform:translateY(6px);}
+        to{opacity:1;}
+        }
+
+        /* Mobile */
+        @media(max-width:576px){
+
+        #searchForm{
+            flex-direction:column;
+            align-items:stretch;
+        }
+
+        #searchForm input{
+            max-width:100%;
+        }
+
+        .movie-card img{
+            aspect-ratio:2/3;
+        }
+
+        #latestMovies .col-6{
+            width:140px;
+        }
+
+        }
   </style>
 </head>
 
 <body>
 
 <!-- NAVBAR -->
-<nav class="navbar fixed-top navbar-dark bg-dark shadow-sm px-3">
+<nav class="navbar fixed-top shadow-sm px-3">
   <a class="navbar-brand fw-bold" id="homeTitle">🍿 IMDb Guide</a>
-  <button class="btn btn-sm btn-outline-light" id="btnSwitch">
+  <button class="btn btn-sm btn-outline-secondary" id="btnSwitch">
     <i class="fas fa-moon"></i>
   </button>
 </nav>
@@ -75,7 +334,14 @@
 <!-- SEARCH -->
 <div class="container mt-4">
   <div class="glass text-center mb-4">
-    <h2 class="fw-bold" id="pageTitle">Search Movies & TV Series Parental Guide</h2>
+    <h2 class="fw-bold cursor-pointer mb-1 title-main" id="subTitle">
+  🍿 IMDb Guide
+    </h2>
+
+
+<p class="text-secondary mb-3 cursor-pointer title-sub" id="pageTitle">
+  Search Movies & TV Series Parental Guide
+</p>
 
     <!-- Mobile Advanced Toggle -->
     <button class="btn btn-outline-secondary mb-2 d-sm-none" id="toggleAdvanced">Advanced ▼</button>
@@ -98,9 +364,7 @@
     </form>
   </div>
 
-  <!-- Latest Movies -->
-  <h4 id="latestTitle">🔥 Latest Movies (2025)</h4>
-  <div class="row g-3" id="latestMovies"></div>
+
 
   <!-- Dynamic Results -->
   <div class="mt-4" id="resultsArea"></div>
@@ -152,12 +416,16 @@ async function getPoster(imdbID){
 
 /* ===== Render Movies ===== */
 function renderMovies(list, containerId) {
-  let html = `<div class="row g-3 fade-in">`;
+  let html = `<div class="results-grid fade-in">`;
   list.forEach(m => html += `
-    <div class="col-6 col-md-3">
-      <div class="glass movie-card h-100">
+    <div>
+      <div class="glass movie-card h-100 ${m.Type === "series" ? "series-card" : ""}">
         <a href="https://www.imdb.com/title/${m.imdbID}/parentalguide" target="_blank">
-          <img src="${m.Poster !== "N/A" ? m.Poster : "https://placehold.co/200x300"}">
+          <div class="poster-wrap">
+       <img 
+  src="${m.Poster && m.Poster !== 'N/A' ? m.Poster : 'https://placehold.co/200x300?text=No+Image'}"
+  onerror="this.onerror=null;this.src='https://placehold.co/200x300?text=No+Image';">
+        </div>
         </a>
         <div class="mt-2 fw-bold">${m.Title}</div>
         <small class="text-secondary">${m.Year} — ${m.Type}</small>
@@ -168,19 +436,18 @@ function renderMovies(list, containerId) {
   document.getElementById(containerId).innerHTML = html + "</div>";
 }
 
-/* ===== Latest Movies ===== */
-async function loadLatest() {
-  const data = await apiCall(`https://www.omdbapi.com/?apikey=${api()}&s=movie&y=2025`);
-  if (data.Response === "True") renderMovies(data.Search.slice(0,8), "latestMovies");
-}
-function hideLatest(){ document.getElementById("latestTitle").style.display = "none"; document.getElementById("latestMovies").style.display = "none"; }
-loadLatest();
-hideLatest();
-
 /* ===== Populate Year Selector ===== */
 const yearSelect = document.getElementById("year-input");
-for (let y = 2025; y >= 2000; y--) {
-  const opt = document.createElement("option"); opt.value = y; opt.textContent = y; yearSelect.appendChild(opt);
+
+const currentYear = new Date().getFullYear();
+const startYear = currentYear + 1;   // allow upcoming movies
+const endYear = 1970;                // IMDb era start
+
+for (let y = startYear; y >= endYear; y--) {
+  const opt = document.createElement("option");
+  opt.value = y;
+  opt.textContent = y;
+  yearSelect.appendChild(opt);
 }
 
 /* ===== Search Movies ===== */
@@ -191,7 +458,6 @@ async function searchMovies(q, p = 1, y = "", type = "") {
   if (type) url += `&type=${type}`;
   const data = await apiCall(url);
   if (data.Response === "False") return showMsg("⚠️ No results found.");
-  hideLatest();
   renderMovies(data.Search, "resultsArea");
   document.getElementById("pagination").classList.remove("d-none");
 }
@@ -223,11 +489,11 @@ document.addEventListener("click", async (e) => {
 
     const episodes = await Promise.all(seasonData.Episodes.map(async ep => ({...ep, poster: await getPoster(ep.imdbID)})));
 
-    let html = `<button class="btn btn-outline-secondary mb-3" id="btnBackSeason" data-id="${id}">← Back to Seasons</button><div class="row g-3 fade-in">`;
-    episodes.forEach(ep => {
-      html += `<div class="col-6 col-md-3"><div class="glass movie-card h-100">
+    let html = `<button class="btn btn-outline-secondary mb-3" id="btnBackSeason" data-id="${id}">← Back to Seasons</button><div class="results-grid fade-in">`;    episodes.forEach(ep => {
+      html += `<div><div class="glass movie-card h-100">
         <a href="https://www.imdb.com/title/${ep.imdbID}/parentalguide" target="_blank">
-          <img src="${ep.poster}">
+          <img src="${ep.poster}" 
+     onerror="this.onerror=null;this.src='https://placehold.co/200x300?text=No+Image';">
         </a>
         <div class="fw-bold mt-2">${ep.Title}</div>
         <small class="text-secondary">Ep ${ep.Episode} — ${ep.Released}</small>
@@ -245,20 +511,33 @@ async function loadSeasons(id) {
   const total = parseInt(info.totalSeasons) || 0;
   let html = `<button class="btn btn-outline-secondary mb-3" id="btnBack">← Back</button>
     <div class="glass text-center fade-in">
-      <img class="movie-card mb-2" style="aspect-ratio:10/15; width:180px; border-radius:14px;"
-        src="${info.Poster !== "N/A" ? info.Poster : "https://placehold.co/200x300"}">
+      <img class="season-poster mb-3"
+        src="${info.Poster !== "N/A" ? info.Poster : "https://placehold.co/200x300?text=No+Image"}"
+onerror="this.onerror=null;this.src='https://placehold.co/200x300?text=No+Image';">
       <h4>${info.Title} (${info.Year})</h4>
       <p class="text-secondary">Select a season</p>`;
   for (let i = 1; i <= total; i++) html += `<button class="btn btn-primary m-1 ep-btn" data-id="${id}" data-season="${i}">Season ${i}</button>`;
   html += "</div>";
-  hideLatest();
   document.getElementById("pagination").classList.add("d-none");
   document.getElementById("resultsArea").innerHTML = html;
 }
 
 /* ===== Reload / Reset on Title Click ===== */
-document.getElementById("homeTitle").onclick = () => location.reload();
-document.getElementById("pageTitle").onclick = () => location.reload();
+function resetApp(){
+
+document.getElementById("searchForm").reset();
+
+document.getElementById("resultsArea").innerHTML = "";
+document.getElementById("pagination").classList.add("d-none");
+
+page = 1;
+lastQuery = "";
+
+}
+
+document.getElementById("homeTitle").onclick = resetApp;
+document.getElementById("pageTitle").onclick = resetApp;
+document.getElementById("subTitle").onclick = resetApp;
 
 /* ===== Toggle Advanced Filters on Mobile ===== */
 document.getElementById("toggleAdvanced").onclick = () => {
