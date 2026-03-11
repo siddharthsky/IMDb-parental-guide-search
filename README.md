@@ -1,26 +1,29 @@
-# IMDb Parental Guide Search [🍿🔗](https://bit.ly/IMDb-parental-guide-search)
+# 🍿 IMDb Parental Guide Search
 
-An interactive web app for searching movies and TV series, providing direct access to parental guide details. Powered by the OMDb API and styled with Bootstrap.
+**Instantly find IMDb parental guide information for any movie or TV show.**
 
-## Overview 🌐
+A fast, lightweight web app that lets users search movies and TV series and **jump directly to their IMDb Parental Guide page**.  
+Built with **OMDb API, JavaScript, and Bootstrap** for a clean and responsive experience.
 
-The IMDb Parental Guide Search is designed to fetch detailed information about movies and TV series from the OMDb API. It offers a user-friendly interface to access parental guide data effortlessly.
+🌐 **Live Demo:** https://bit.ly/imdb-guide
 
-## Features 🚀
+---
 
-- 🎬 Search and explore movies and TV series.
-- 📺 Direct access to parental guide details.
-- 🔍 Dynamic UI powered by Bootstrap.
-- 🌐 Seamless integration with OMDb API for IMDb data.
+## Features 
 
-## Technology Stack 🛠️
+- Search and explore movies and TV series.
+- Direct access to parental guide details.
+- Dynamic UI powered by Bootstrap.
+- Seamless integration with OMDb API for IMDb data.
+
+## Technology Stack 
 
 - **OMDb API**: Primary data source for IMDb content.
 - **Bootstrap**: Ensures a responsive and visually appealing UI.
 - **JavaScript**: Manages client-side functionalities.
 
 
-## User Guide 📲
+## User Guide 
 
 1. Open the web app - https://bit.ly/imdb-guide
 2. Enter the movie or TV series name in the search bar.
@@ -40,7 +43,7 @@ The IMDb Parental Guide Search is designed to fetch detailed information about m
 ![Redirect](screenshots/redirect.png)
 
 
-## Contributing 🤝
+## Contributing 
 
 Contributions to the project are welcome! Feel free to submit pull requests or open issues to help enhance the project.
 
