@@ -377,10 +377,21 @@
     </ul>
   </nav>
 
-  <div class="text-center mt-4">
-    <small class="text-secondary">IMDb Data © via OMDb API</small>
-  </div>
-</div>
+
+   <div id="footer"></div>
+
+
+
+ <script>
+  fetch('https://raw.githubusercontent.com/siddharthsky/sky7t.github.io/refs/heads/main/src/components/footer.html')
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById('footer').innerHTML = data;
+    })
+    .catch(error => {
+      console.error('Error fetching footer:', error);
+    });
+</script>
 
 <script>
 /* ===== THEME TOGGLE ===== */
